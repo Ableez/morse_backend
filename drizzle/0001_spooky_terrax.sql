@@ -1,0 +1,1 @@
+ALTER TABLE "morse_courses" ADD COLUMN "path_id" uuid NOT NULL;

@@ -1,0 +1,1 @@
+ALTER TABLE "morse_color_schemes" ALTER COLUMN "path_id" DROP NOT NULL;

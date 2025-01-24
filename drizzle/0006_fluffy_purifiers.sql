@@ -1,0 +1,1 @@
+ALTER TABLE "morse_color_schemes" ADD COLUMN "color_name" varchar NOT NULL;

@@ -1,0 +1,1 @@
+ALTER TABLE "morse_learning_paths" ADD COLUMN "color_scheme_id" uuid;
