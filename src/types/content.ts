@@ -1,4 +1,3 @@
-// Add or update the following types
 export type TextStyle = "body" | "title" | "caption";
 export type TextSize = "small" | "normal" | "large" | "extra_bold";
 export type ContentType = "text" | "image" | "gif";

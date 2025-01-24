@@ -1,166 +1,135 @@
 "use client";
 
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  type DropResult,
+} from "@hello-pangea/dnd";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { FloatingToolbar } from "./floating-toolbar";
+import { useEditor } from "./editor-context";
 import Image from "next/image";
-import type { Content } from "@/types/content";
-import { isTextContent, isImageContent } from "@/types/content";
-import { Button } from "@/components/ui/button";
-import { DeleteIcon, SaveIcon, Trash2Icon } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-function SwipeCard({
-  editContent,
-  removeContent,
-  cardContent,
-  editTitle,
-}: Readonly<{
-  editContent: (id: string, newUpdates: Partial<Content>) => void;
-  removeContent: (id: string) => void;
-  cardContent: {
-    title?: string;
-    content: Content[];
-  };
-  editTitle: (newTitle: string) => void;
-}>) {
-  const renderContent = (item: Content) => {
-    if (isImageContent(item)) {
-      return (
-        <div className="relative my-4 flex w-full flex-col justify-center align-middle">
-          <Image
-            src={item.imageUrl}
-            alt={item.alt ?? ""}
-            width={item.imageWidth ?? 200}
-            height={item.imageWidth ?? 200}
-            className="mx-auto rounded-2xl"
-          />
-          {item.caption && (
-            <p
-              contentEditable
-              onBlur={(e) =>
-                editContent(item.id, {
-                  caption: e.currentTarget.textContent ?? "",
-                })
-              }
-              className="mt-2 text-center text-xs italic text-gray-600 focus:outline-none"
-            >
-              {item.caption}
-            </p>
-          )}
-        </div>
-      );
-    }
+export function Canvas() {
+  const {
+    lesson,
+    currentSlide,
+    selectedElement,
+    setCurrentSlide,
+    setSelectedElement,
+    reorderElements,
+  } = useEditor();
 
-    if (isTextContent(item)) {
-      const className = `mb-1 focus:outline-none ${
-        item.textStyle === "title"
-          ? "text-xl font-bold"
-          : item.textStyle === "caption"
-            ? "text-xs italic text-gray-600"
-            : "text-sm justify-full"
-      }`;
+  if (!lesson) return null;
 
-      return (
-        <div
-          contentEditable
-          className={cn("w-full cursor-text text-black", className)}
-          onBlur={(e) =>
-            editContent(item.id, {
-              textContent: e.currentTarget.textContent ?? "",
-            })
-          }
-          dangerouslySetInnerHTML={{ __html: item.textContent }}
-        />
-      );
-    }
+  const slide = lesson.slides[currentSlide];
+  const totalSlides = lesson.slides.length;
 
-    return null;
+  const handleDragEnd = (result: DropResult<string>) => {
+    if (!result.destination) return;
+    reorderElements(result.source.index, result.destination.index);
   };
 
   return (
-    <div
-      className="h-[50dvh] w-[300px] overflow-hidden rounded-3xl border border-black bg-white p-6 shadow-lg"
-      style={{ minHeight: "440px" }}
-    >
-      <div className="flex w-full items-center justify-center">
-        <input
-          value={cardContent.title}
-          onChange={(e) => editTitle(e.target.value)}
-          className="mb-1 w-fit border-b-2 border-black/10 bg-transparent pb-0.5 text-center text-lg font-bold text-black focus:outline-none"
-        />
+    <div className="flex flex-1 flex-col place-items-center items-center justify-center p-8">
+      <div className="relative aspect-video h-[70dvh] w-[27dvw] rounded-3xl border bg-white">
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="elements">
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="space-y-4"
+              >
+                {slide?.elements?.map((element, index) => (
+                  <Draggable
+                    key={element.id}
+                    draggableId={element.id}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className={`group relative ${selectedElement === element.id ? "ring-1 ring-blue-500" : ""}`}
+                        onClick={() => setSelectedElement(element.id)}
+                      >
+                        {element.type === "text" && (
+                          <h2 className="text-2xl font-bold">
+                            {element.content}
+                          </h2>
+                        )}
+                        {element.type === "text" && (
+                          <p className={`text-${element.align}`}>
+                            {element.content}
+                          </p>
+                        )}
+                        {element.type === "image" && (
+                          <Image
+                            fill
+                            src={element.uri ?? "/placeholder.svg"}
+                            alt="Slide content"
+                            className={`${element.width === "fill" ? "w-full" : "w-auto"}`}
+                          />
+                        )}
+                        {element.type === "carousel" && (
+                          <div className="flex gap-4 overflow-x-auto">
+                            {element.images?.map((image, i) => (
+                              <Image
+                                key={i}
+                                src={image ?? "/placeholder.svg"}
+                                alt={`Carousel ${i + 1}`}
+                                className="w-64"
+                              />
+                            ))}
+                          </div>
+                        )}
+                        {element.type === "options" && (
+                          <ul className="space-y-2">
+                            {element.choices?.map((choice, i) => (
+                              <li key={i} className="flex items-center gap-2">
+                                <input
+                                  type="radio"
+                                  name={`choices-${element.id}`}
+                                />
+                                <span>{choice}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {selectedElement === element.id && (
+                          <FloatingToolbar elementId={element.id} />
+                        )}
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
-      {cardContent.content.map((item) => (
-        <div
-          key={item.id}
-          className="group relative flex items-center align-middle"
+      <div className="mt-4 flex items-center gap-4">
+        <button
+          className="cursor-pointer rounded-2xl border bg-white px-6 py-3 text-black hover:bg-white/50 disabled:bg-white/50 disabled:text-neutral-500"
+          disabled={currentSlide === 0}
+          onClick={() => setCurrentSlide(currentSlide - 1)}
         >
-          {renderContent(item)}
-          <button
-            onClick={() => removeContent(item.id)}
-            className="absolute -right-1 top-2 rounded-lg opacity-0 transition-all duration-300 ease-out group-hover:right-1 group-hover:opacity-100"
-          >
-            <Trash2Icon size={16} color="#eb0000" />
-          </button>
-        </div>
-      ))}
-      {cardContent.content.length === 0 && (
-        <div className="flex h-full items-center justify-center text-gray-400">
-          <h4 className="mb-4">Add contents</h4>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function Canvas({
-  editContent,
-  handleAdd,
-  removeContent,
-  cardContent,
-  handleSave,
-  editTitle,
-}: Readonly<{
-  editContent: (id: string, newUpdates: Partial<Content>) => void;
-  handleAdd: (content: Content) => void;
-  removeContent: (id: string) => void;
-  cardContent: {
-    title?: string;
-    content: Content[];
-  };
-  handleSave: () => void;
-  editTitle: (newTitle: string) => void;
-}>) {
-  return (
-    <div className="canvas_a flex h-screen w-screen flex-col items-center justify-center">
-      <SwipeCard
-        editContent={editContent}
-        removeContent={removeContent}
-        cardContent={cardContent}
-        editTitle={editTitle}
-      />
-      <div className="absolute bottom-10 flex place-items-center justify-between gap-4 rounded-2xl bg-neutral-800 p-1.5 align-middle">
-        <Button
-          variant="destructive"
-          onClick={() =>
-            handleAdd({
-              id: crypto.randomUUID(),
-              _type: "text",
-              textContent: "",
-              textStyle: "body",
-              textSize: "normal",
-            })
-          }
-          size={"icon"}
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <span>
+          {currentSlide + 1} of {totalSlides}
+        </span>
+        <button
+          className="cursor-pointer rounded-2xl border bg-white px-6 py-3 text-black hover:bg-white/50 disabled:bg-white/50 disabled:text-neutral-500"
+          disabled={currentSlide === totalSlides - 1}
+          onClick={() => setCurrentSlide(currentSlide + 1)}
         >
-          <DeleteIcon />
-        </Button>
-        <Button
-          onClick={() => {
-            handleSave();
-          }}
-          size={"icon"}
-          variant="outline"
-        >
-          <SaveIcon />
-        </Button>
+          <ChevronRight className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );

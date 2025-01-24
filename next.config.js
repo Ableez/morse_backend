@@ -38,6 +38,11 @@ const config = {
         hostname: "media.istockphoto.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "sjc.microlink.io",
+        port: "",
+      },
     ],
   },
 };

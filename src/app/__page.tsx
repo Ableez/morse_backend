@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, TextIcon as LetterTextIcon, ImageIcon } from "lucide-react";
-import Canvas from "@/components/canvas";
+import Canvas from "@/components/old-canvas";
 import {
   type Content,
   type TextContent,
