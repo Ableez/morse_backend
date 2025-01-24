@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import type { ContentElement } from "@/types/swipe-data";
+import type { ImageElement } from "@/types/swipe-data";
 
 type ImageElementProps = {
-  element: ContentElement & { uri: string };
+  element: ImageElement;
 };
 
 export function ImageElement({ element }: ImageElementProps) {

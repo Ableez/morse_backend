@@ -1,9 +1,9 @@
 "use client";
 
-import type { ContentElement } from "@/types/swipe-data";
+import type { OptionsElement } from "@/types/swipe-data";
 
 type OptionsElementProps = {
-  element: ContentElement & { choices: string[] };
+  element: OptionsElement;
 };
 
 export function OptionsElement({ element }: OptionsElementProps) {

@@ -158,11 +158,11 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
       id: crypto.randomUUID(),
       type: "text",
       variant,
-      content: text ?? "What's on your mind?",
-      width: "fill",
+      content: text || (variant === "bold" ? "Bold text" : "Enter text"),
       align: "left",
+      width: "fill",
     };
-    
+
     addElementToSlide(textElement);
   };
 
@@ -218,6 +218,7 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     updates: Partial<ContentElement>,
   ) => {
     if (!lesson) return;
+
     const updatedSlides = lesson.slides.map((slide, index) => {
       if (index === currentSlide) {
         return {

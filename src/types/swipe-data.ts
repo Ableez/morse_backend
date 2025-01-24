@@ -1,4 +1,88 @@
 export type TextType = "bold" | "default" | "caption";
+// export type ElementType =
+//   | "text"
+//   | "image"
+//   | "expression"
+//   | "options"
+//   | "carousel";
+
+// export type ContentElement =
+//   | {
+//       id: string;
+//       type: "text";
+//       variant: TextType;
+//       content: string;
+//       bottomSpace?: number;
+//       topSpace?: number;
+//       width: "fill" | "hug";
+//       align: "left" | "center" | "right" | "justify";
+//     }
+//   | {
+//       id: string;
+//       type: "image";
+//       uri: string;
+//       size?: "small" | "tall" | "large" | "full";
+//       height?: number;
+//       width: "fill" | "hug";
+//       align: "left" | "center" | "right";
+//       bottomSpace?: number;
+//       topSpace?: number;
+//     }
+//   | {
+//       id: string;
+//       type: "expression";
+//       latex: string;
+//       displayMode?: "inline" | "block";
+//       width: "fill" | "hug";
+//       align: "left" | "center" | "right";
+//       bottomSpace?: number;
+//       topSpace?: number;
+//     }
+//   | {
+//       id: string;
+//       type: "options";
+//       choices: string[];
+//       correctAnswer: number;
+//       why?: ContentElement[];
+//       width: "fill" | "hug";
+//       align: "left" | "center" | "right";
+//       bottomSpace?: number;
+//       topSpace?: number;
+//     }
+//   | {
+//       id: string;
+//       type: "carousel";
+//       images: string[];
+//       arr: boolean;
+//       showDots: boolean;
+//       width: "fill" | "hug";
+//       align: "left" | "center" | "right";
+//       bottomSpace?: number;
+//       topSpace?: number;
+//     };
+
+// export type CardContentType = {
+//   id: string;
+//   elements: ContentElement[] | null;
+//   title?: string;
+//   index: number;
+//   type: "info" | "qa";
+// };
+
+// export type CardContents = CardContentType & { viewed: boolean }[];
+
+// types.d.ts
+
+// Base types
+export type Spacing = {
+  topSpace?: number;
+  bottomSpace?: number;
+};
+
+export type Dimensions = {
+  width: "fill" | "hug";
+};
+
 export type ElementType =
   | "text"
   | "image"
@@ -6,70 +90,83 @@ export type ElementType =
   | "options"
   | "carousel";
 
-export type ContentElement =
-  | {
-      id: string;
-      type: "text";
-      variant: TextType;
-      content: string;
-      bottomSpace?: number;
-      topSpace?: number;
-      width: "fill" | "hug";
-      align: "left" | "center" | "right" | "justify";
-    }
-  | {
-      id: string;
-      type: "image";
-      uri: string;
-      size?: "small" | "tall" | "large" | "full";
-      height?: number;
-      width: "fill" | "hug";
-      align: "left" | "center" | "right";
-      bottomSpace?: number;
-      topSpace?: number;
-    }
-  | {
-      id: string;
-      type: "expression";
-      latex: string;
-      displayMode?: "inline" | "block";
-      width: "fill" | "hug";
-      align: "left" | "center" | "right";
-      bottomSpace?: number;
-      topSpace?: number;
-    }
-  | {
-      id: string;
-      type: "options";
-      choices: string[];
-      correctAnswer: number;
-      why?: ContentElement[];
-      width: "fill" | "hug";
-      align: "left" | "center" | "right";
-      bottomSpace?: number;
-      topSpace?: number;
-    }
-  | {
-      id: string;
-      type: "carousel";
-      images: string[];
-      arr: boolean;
-      showDots: boolean;
-      width: "fill" | "hug";
-      align: "left" | "center" | "right";
-      bottomSpace?: number;
-      topSpace?: number;
-    };
+// Alignment types
+export type TextAlignment = "left" | "center" | "right" | "justify";
+export type MediaAlignment = "left" | "center" | "right";
 
-export type CardContentType = {
+// Base element interface
+export interface BaseElement extends Spacing, Dimensions {
   id: string;
-  elements: ContentElement[] | null;
+  type: ElementType;
+}
+
+// Text element
+export interface TextElement extends BaseElement {
+  type: "text";
+  variant: "bold" | "default" | "caption";
+  content: string;
+  align: TextAlignment;
+}
+
+// Image element
+export interface ImageElement extends BaseElement {
+  type: "image";
+  uri: string;
+  size?: "small" | "tall" | "large" | "full";
+  height?: number;
+  align: MediaAlignment;
+}
+
+// Math expression element
+export interface ExpressionElement extends BaseElement {
+  type: "expression";
+  latex: string;
+  displayMode?: "inline" | "block";
+  align: MediaAlignment;
+}
+
+// Multiple choice element
+export interface OptionsElement extends BaseElement {
+  type: "options";
+  choices: string[];
+  correctAnswer: number;
+  why?: ContentElement[];
+  align: MediaAlignment;
+}
+
+// Carousel element
+export interface CarouselElement extends BaseElement {
+  type: "carousel";
+  images: string[];
+  arr: boolean;
+  showDots: boolean;
+  align: MediaAlignment;
+}
+
+// Union type for all elements
+export type ContentElement =
+  | TextElement
+  | ImageElement
+  | ExpressionElement
+  | OptionsElement
+  | CarouselElement;
+
+// Card types
+export type CardType = "info" | "qa";
+
+export interface CardContentType {
+  id: string;
   title?: string;
   index: number;
-  type: "info" | "qa";
-};
+  type: CardType;
+  elements: ContentElement[] | null;
+}
 
-export type CardContents = CardContentType & { viewed: boolean }[];
+export interface ViewedCard extends CardContentType {
+  viewed: boolean;
+}
+
+export type CardContents = ViewedCard[];
 
 // export const cardContent: CardContentType[] = [
 //   {
