@@ -25,6 +25,8 @@ export type ContentElement =
       height?: number;
       width: "fill" | "hug";
       align: "left" | "center" | "right";
+      bottomSpace?: number;
+      topSpace?: number;
     }
   | {
       id: string;
@@ -33,6 +35,8 @@ export type ContentElement =
       displayMode?: "inline" | "block";
       width: "fill" | "hug";
       align: "left" | "center" | "right";
+      bottomSpace?: number;
+      topSpace?: number;
     }
   | {
       id: string;
@@ -42,6 +46,8 @@ export type ContentElement =
       why?: ContentElement[];
       width: "fill" | "hug";
       align: "left" | "center" | "right";
+      bottomSpace?: number;
+      topSpace?: number;
     }
   | {
       id: string;
@@ -51,6 +57,8 @@ export type ContentElement =
       showDots: boolean;
       width: "fill" | "hug";
       align: "left" | "center" | "right";
+      bottomSpace?: number;
+      topSpace?: number;
     };
 
 export type CardContentType = {

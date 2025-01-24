@@ -5,7 +5,7 @@ import { ChevronUp, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
-import { useEditor } from "./editor-context";
+import { useEditor } from "./cards-canvas/editor-context";
 
 export function Sidebar() {
   const {
@@ -25,7 +25,7 @@ export function Sidebar() {
   };
 
   return (
-    <div className="w-64 h-[90dvh] my-auto rounded-2xl border shadow-2xl bg-white p-4 left-2 fixed left-0 top-1/2 -translate-y-1/2 z-[99]">
+    <div className="fixed left-0 left-2 top-1/2 z-[99] my-auto h-[90dvh] w-64 -translate-y-1/2 rounded-2xl border bg-white p-4 shadow-2xl">
       <div className="mb-4 h-1 w-1/3 rounded-full bg-green-500" />
       <div className="mb-2 flex items-center gap-2">
         <span className="text-sm">{lesson.slides.length} Slides</span>

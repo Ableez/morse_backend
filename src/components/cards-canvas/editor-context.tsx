@@ -20,7 +20,7 @@ interface EditorContextType {
   addSlide: () => void;
   removeSlide: (slideId: string) => void;
   reorderSlides: (startIndex: number, endIndex: number) => void;
-  updateElement: (elementId: string, updates: Partial<Element>) => void;
+  updateElement: (elementId: string, updates: Partial<ContentElement>) => void;
   removeElement: (elementId: string) => void;
   reorderElements: (startIndex: number, endIndex: number) => void;
   addElementRelative: (
@@ -162,6 +162,7 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
       width: "fill",
       align: "left",
     };
+    
     addElementToSlide(textElement);
   };
 
@@ -359,6 +360,6 @@ export const useEditor = () => {
   if (!context) {
     throw new Error("useEditor must be used within an EditorProvider");
   }
-  
+
   return context;
 };

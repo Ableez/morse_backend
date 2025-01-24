@@ -37,6 +37,6 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts"
-  ],
+, "src/components/cards-canvas/canvas-elements/image-element.tsx"  ],
   "exclude": ["node_modules"]
 }

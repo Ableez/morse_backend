@@ -18,7 +18,7 @@ export function FloatingToolbar({ elementId }: FloatingToolbarProps) {
   const { removeElement, addElementRelative } = useEditor();
 
   return (
-    <div className="absolute -right-44 top-1/2 -translate-y-1/2 z-[999] flex gap-1 rounded-2xl border bg-white p-1 shadow-2xl">
+    <div className="absolute -right-44 top-1/2 z-[999] flex -translate-y-1/2 gap-1 rounded-2xl border bg-white p-1 shadow-2xl">
       <Button
         variant="ghost"
         size="icon"
