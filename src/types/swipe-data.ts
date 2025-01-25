@@ -88,7 +88,8 @@ export type ElementType =
   | "image"
   | "expression"
   | "options"
-  | "carousel";
+  | "carousel"
+  | "katex";
 
 // Alignment types
 export type TextAlignment = "left" | "center" | "right" | "justify";
@@ -102,8 +103,8 @@ export interface BaseElement extends Spacing, Dimensions {
 
 // Text element
 export interface TextElement extends BaseElement {
-  type: "text";
-  variant: "bold" | "default" | "caption";
+  type: "text" | "image" | "carousel" | "options" | "katex";
+  variant?: "bold" | "default" | "caption" | "inline-math" | "display-math";
   content: string;
   align: TextAlignment;
 }

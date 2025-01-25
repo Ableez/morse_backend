@@ -21,28 +21,9 @@ export function FloatingToolbar({ elementId }: FloatingToolbarProps) {
     currentSlide,
     removeElement,
     addElementRelative,
-    reorderElements,
+    moveElementUp,
+    moveElementDown,
   } = useEditor();
-
-  const handleMoveUp = () => {
-    if (!lesson) return;
-    const elements = lesson.slides[currentSlide]?.elements ?? [];
-    const currentIndex = elements.findIndex((el) => el.id === elementId);
-
-    if (currentIndex > 0) {
-      reorderElements(currentIndex, currentIndex - 1);
-    }
-  };
-
-  const handleMoveDown = () => {
-    if (!lesson) return;
-    const elements = lesson.slides[currentSlide]?.elements ?? [];
-    const currentIndex = elements.findIndex((el) => el.id === elementId);
-
-    if (currentIndex < elements.length - 1) {
-      reorderElements(currentIndex, currentIndex + 1);
-    }
-  };
 
   return (
     <div className="absolute -right-44 top-1/2 z-[999] flex -translate-y-1/2 gap-1 rounded-2xl border bg-white p-1 shadow-2xl">
@@ -51,11 +32,11 @@ export function FloatingToolbar({ elementId }: FloatingToolbarProps) {
         size="icon"
         onClick={(e) => {
           e.stopPropagation();
-          handleMoveUp();
+          moveElementUp(elementId);
         }}
         disabled={
           !lesson?.slides[currentSlide]?.elements?.some(
-            (el, index) => el.id === elementId && index === 0,
+            (el, index, arr) => el.id === elementId && index === arr.length - 1,
           )
         }
       >
@@ -67,11 +48,12 @@ export function FloatingToolbar({ elementId }: FloatingToolbarProps) {
         size="icon"
         onClick={(e) => {
           e.stopPropagation();
-          handleMoveDown();
+          moveElementDown(elementId);
         }}
         disabled={
           !lesson?.slides[currentSlide]?.elements?.some(
-            (el, index, arr) => el.id === elementId && index === arr.length - 1,
+            (el, index, arr) =>
+              (el.id === elementId && index !== 0) || index === arr.length - 1,
           )
         }
       >

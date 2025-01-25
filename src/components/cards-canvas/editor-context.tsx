@@ -1,6 +1,7 @@
 "use client";
 
 import { type Lesson } from "@/app/types/editor";
+import { arrayMove } from "@/lib/utils";
 import type {
   CardContentType,
   ContentElement,
@@ -34,6 +35,8 @@ interface EditorContextType {
   addOptions: (choices: string[], correctAnswer: number) => void;
   addCarousel: (images: string[], arr: boolean, showDots: boolean) => void;
   saveLesson: () => void;
+  moveElementUp: (elementId: string) => void;
+  moveElementDown: (elementId: string) => void;
 }
 
 const EditorContext = createContext<EditorContextType | null>(null);
@@ -280,6 +283,49 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  // Implementation in EditorProvider
+  const moveElementUp = (elementId: string) => {
+    if (!lesson) return;
+
+    const currentElements = lesson.slides[currentSlide]?.elements
+      ? [...lesson.slides[currentSlide].elements]
+      : [];
+    const currentIndex = currentElements.findIndex((el) => el.id === elementId);
+
+    if (currentIndex > 0) {
+      const newElements = arrayMove(
+        currentElements,
+        currentIndex,
+        currentIndex - 1,
+      );
+      const updatedSlides = lesson.slides.map((slide, index) =>
+        index === currentSlide ? { ...slide, elements: newElements } : slide,
+      );
+      updateLesson({ ...lesson, slides: updatedSlides });
+    }
+  };
+
+  const moveElementDown = (elementId: string) => {
+    if (!lesson) return;
+
+    const currentElements = lesson.slides[currentSlide]?.elements
+      ? [...lesson.slides[currentSlide].elements]
+      : [];
+    const currentIndex = currentElements.findIndex((el) => el.id === elementId);
+
+    if (currentIndex < currentElements.length - 1) {
+      const newElements = arrayMove(
+        currentElements,
+        currentIndex,
+        currentIndex + 1,
+      );
+      const updatedSlides = lesson.slides.map((slide, index) =>
+        index === currentSlide ? { ...slide, elements: newElements } : slide,
+      );
+      updateLesson({ ...lesson, slides: updatedSlides });
+    }
+  };
+
   const addElementRelative = (
     elementId: string,
     type: ElementType,
@@ -349,6 +395,8 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
         reorderElements,
         addElementRelative,
         saveLesson,
+        moveElementDown,
+        moveElementUp,
       }}
     >
       {children}

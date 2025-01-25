@@ -19,10 +19,14 @@ export const Toolbar = memo(function Toolbar() {
   if (!lesson) return null;
 
   return (
-    <aside className="fixed right-2 top-1/2 z-[99] h-[90dvh] w-72 -translate-y-1/2 space-y-4 overflow-y-auto rounded-2xl border bg-white p-4 shadow-2xl">
-      <ToolbarHeader />
-      <ElementCreationButtons />
-      {currentElement && <ElementSettings element={currentElement} />}
+    <aside className="z-[99]-translate-y-1/2 fixed right-2 top-1/2 -translate-y-1/2 rounded-2xl border bg-white shadow-2xl">
+      <div className="relative h-[90dvh] w-72 space-y-4 overflow-y-scroll p-4 pb-14">
+        <ToolbarHeader />
+        <ElementCreationButtons />
+        {currentElement && <ElementSettings element={currentElement} />}
+
+        <div className="fixed -bottom-0.5 left-0 z-[99] h-14 w-full rounded-b-2xl bg-gradient-to-t from-white to-white/0" />
+      </div>
     </aside>
   );
 });

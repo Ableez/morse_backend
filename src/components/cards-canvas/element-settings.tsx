@@ -22,9 +22,14 @@ export const ElementSettings = memo(function ElementSettings({
 
       <ElementWidthControl element={element} />
       <SpacingControl
-        label="Top Spacing"
+        label="Top Space"
         value={element.topSpace ?? 0}
         onChange={(value) => updateElement(element.id, { topSpace: value })}
+      />
+      <SpacingControl
+        label="Bottom Space"
+        value={element.bottomSpace ?? 0}
+        onChange={(value) => updateElement(element.id, { bottomSpace: value })}
       />
     </div>
   );
