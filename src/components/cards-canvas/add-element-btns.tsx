@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Type, ImageIcon, List } from "lucide-react";
+import { Type, ImageIcon, List, Sigma } from "lucide-react";
 import { IconSlideshow } from "@tabler/icons-react";
 import { useEditor } from "./editor-context";
 import { memo, useState, type ComponentType } from "react";
@@ -13,10 +13,11 @@ interface EditorActions {
   addImage: (url: string) => void;
   addCarousel: (images: string[], autoPlay: boolean, showDots: boolean) => void;
   addOptions: (options: string[], correctIndex: number) => void;
+  addKatexExpression: (content: string, displayMode?: boolean) => void;
 }
 
 export const ElementCreationButtons = memo(function ElementCreationButtons() {
-  const { addText, addImage, addCarousel, addOptions } =
+  const { addText, addImage, addCarousel, addOptions, addKatexExpression } =
     useEditor() as EditorActions;
   const [openOptions, setOpenOptions] = useState(false);
   const [options, setOptions] = useState<string[]>(["", ""]);
@@ -75,6 +76,17 @@ export const ElementCreationButtons = memo(function ElementCreationButtons() {
         correctAns={correctAns}
         setCorrectAns={setCorrectAns}
         onClick={handleAddOptions}
+      />
+      <ToolbarButton
+        label="Add Inline Math"
+        Icon={Sigma}
+        onClick={() => addKatexExpression("", false)}
+      />
+
+      <ToolbarButton
+        label="Add Block Math"
+        Icon={Sigma}
+        onClick={() => addKatexExpression("", true)}
       />
     </div>
   );

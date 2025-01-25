@@ -6,6 +6,7 @@ import type {
   CardContentType,
   ContentElement,
   ElementType,
+  TextElement,
   TextType,
 } from "@/types/swipe-data";
 import { createContext, useContext, useState, useEffect } from "react";
@@ -37,6 +38,7 @@ interface EditorContextType {
   saveLesson: () => void;
   moveElementUp: (elementId: string) => void;
   moveElementDown: (elementId: string) => void;
+  addKatexExpression: (content: string, displayMode?: boolean) => void;
 }
 
 const EditorContext = createContext<EditorContextType | null>(null);
@@ -167,6 +169,19 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     };
 
     addElementToSlide(textElement);
+  };
+
+  const addKatexExpression = (content: string, displayMode = false) => {
+    const katexElement: ContentElement = {
+      id: crypto.randomUUID(),
+      type: "katex",
+      variant: displayMode ? "display-math" : "inline-math",
+      content: content || "\\sqrt{a^2 + b^2}",
+      align: "center",
+      width: "hug",
+    };
+
+    addElementToSlide(katexElement);
   };
 
   const addImage = (uri: string) => {
@@ -397,6 +412,7 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
         saveLesson,
         moveElementDown,
         moveElementUp,
+        addKatexExpression,
       }}
     >
       {children}

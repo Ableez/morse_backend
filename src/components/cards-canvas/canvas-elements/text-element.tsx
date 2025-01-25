@@ -6,7 +6,7 @@ import type { TextElement } from "@/types/swipe-data";
 
 type TextElementProps = {
   element: TextElement;
-};ac
+};
 
 export function TextElement({ element }: TextElementProps) {
   const { updateElement } = useEditor();
