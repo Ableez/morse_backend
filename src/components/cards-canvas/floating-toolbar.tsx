@@ -6,10 +6,13 @@ import { useEditor } from "./editor-context";
 import {
   IconChevronDown,
   IconChevronUp,
+  IconPhotoEdit,
   IconRowInsertBottom,
   IconRowInsertTop,
   IconTrash,
 } from "@tabler/icons-react";
+import { useAddImageElementDialog } from "@/hooks/use-add-image-element-dialog";
+import { XIcon } from "lucide-react";
 
 interface FloatingToolbarProps {
   elementId: string;
@@ -23,10 +26,43 @@ export function FloatingToolbar({ elementId }: FloatingToolbarProps) {
     addElementRelative,
     moveElementUp,
     moveElementDown,
+    getElementType,
+    updateElement,
+    setSelectedElement,
   } = useEditor();
+  const elementType = getElementType(elementId);
+
+  const onUploadComplete = (url: string) => {
+    updateElement(elementId, { uri: url });
+  };
+
+  const [, setOpen, renderElement] = useAddImageElementDialog({
+    onUploadComplete,
+  });
 
   return (
-    <div className="absolute -right-44 top-1/2 z-[999] flex -translate-y-1/2 gap-1 rounded-2xl border bg-white p-1 shadow-2xl">
+    <div className="absolute -right-44 top-1/2 z-[49] flex -translate-y-1/2 gap-1 rounded-2xl border bg-white p-1 shadow-2xl">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="mr-4 rounded-full active:bg-red-100"
+        onClick={() => {
+          setSelectedElement(null);
+        }}
+      >
+        <XIcon className="h-4 w-4 text-red-600" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        <IconPhotoEdit className="h-4 w-4" />
+      </Button>
+      {elementType === "image" && renderElement()}
+
       <Button
         variant="ghost"
         size="icon"
@@ -64,7 +100,7 @@ export function FloatingToolbar({ elementId }: FloatingToolbarProps) {
         size="icon"
         onClick={(e) => {
           e.stopPropagation();
-          addElementRelative(elementId, "text", "below");
+          addElementRelative(elementId, "text", "above");
         }}
       >
         <IconRowInsertTop className="h-4 w-4" />

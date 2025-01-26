@@ -59,7 +59,11 @@ export const ElementCreationButtons = memo(function ElementCreationButtons() {
       <ToolbarButton
         label="Add Image"
         Icon={ImageIcon}
-        onClick={() => addImage("https://example.com/placeholder.jpg")}
+        onClick={() =>
+          addImage(
+            "https://adaptcommunitynetwork.org/wp-content/uploads/2022/01/ef3-placeholder-image.jpg",
+          )
+        }
       />
       <ToolbarButton
         label="Add Carousel"

@@ -13,7 +13,8 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState, useCallback } from "react";
 
 export default function CourseView({
   course,
@@ -21,10 +22,22 @@ export default function CourseView({
   course: CourseWithRelations;
 }) {
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams],
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Course Header */}
       <div className="border-b bg-white">
         <div className="container mx-auto p-6">
           <Link
@@ -64,7 +77,29 @@ export default function CourseView({
               </div>
 
               <div className="flex items-center gap-4">
-                <Button className="gap-2">
+                <Button
+                  className="gap-2"
+                  onClick={() => {
+                    router.push(
+                      "/canvas/new" +
+                        "?" +
+                        createQueryString(
+                          "pathId",
+                          `${course.pathId + "__Path"}`,
+                        ) +
+                        "&" +
+                        createQueryString(
+                          "levelId",
+                          `${course.levelId + "__" + (course.level?.title ?? "__Level")}`,
+                        ) +
+                        "&" +
+                        createQueryString(
+                          "courseId",
+                          `${course.id + "__" + course.title}`,
+                        ),
+                    );
+                  }}
+                >
                   <Plus className="h-4 w-4" />
                   Add a Lesson
                 </Button>

@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 import { TRPCReactProvider } from "@/trpc/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "../components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -16,8 +17,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <ClerkProvider>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
         <body>
           <ThemeProvider
             attribute="class"
@@ -26,9 +27,10 @@ export default function RootLayout({
             enableColorScheme
           >
             <TRPCReactProvider>{children}</TRPCReactProvider>
+            <Toaster />
           </ThemeProvider>
         </body>
-      </ClerkProvider>
-    </html>
+      </html>
+    </ClerkProvider>
   );
 }

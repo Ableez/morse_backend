@@ -1,15 +1,23 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 "use client";
 
 import { type Lesson } from "@/app/types/editor";
 import { arrayMove } from "@/lib/utils";
-import type {
-  CardContentType,
-  ContentElement,
-  ElementType,
-  TextElement,
-  TextType,
+import {
+  titlesArr,
+  type CardContentType,
+  type ContentElement,
+  type ElementType,
+  type TextType,
 } from "@/types/swipe-data";
-import { createContext, useContext, useState, useEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 
 interface EditorContextType {
   lesson: Lesson | null;
@@ -18,7 +26,7 @@ interface EditorContextType {
   hasUnsavedChanges: boolean;
   setCurrentSlide: (index: number) => void;
   setSelectedElement: (id: string | null) => void;
-  updateLesson: (updatedLesson: Lesson) => void;
+  updateLesson: (updatedLesson: Partial<Lesson>) => void;
   addSlide: () => void;
   removeSlide: (slideId: string) => void;
   reorderSlides: (startIndex: number, endIndex: number) => void;
@@ -39,36 +47,31 @@ interface EditorContextType {
   moveElementUp: (elementId: string) => void;
   moveElementDown: (elementId: string) => void;
   addKatexExpression: (content: string, displayMode?: boolean) => void;
+  getElementType: (elementId: string) => ElementType | null;
+  lessonProgress: number;
+  estimatedDuration: number;
+  recommendedSlideCount: number;
 }
 
 const EditorContext = createContext<EditorContextType | null>(null);
 
 const defaultLesson: Lesson = {
-  id: "1",
+  id: crypto.randomUUID(),
   title: "Building Expressions",
-  description:
-    "Start your algebra journey here with an introduction to variables and equations.",
+  description: "Start your algebra journey here...",
   path: "Path",
   level: "Level 1",
   course: "Course",
-  duration: 6,
+  duration: 0,
   slides: [
     {
-      id: "1",
-      title: "Summary",
+      id: crypto.randomUUID(),
+      title: titlesArr[Math.floor(Math.random() * titlesArr.length)],
       elements: [
         {
-          id: "1",
-          type: "image",
-          uri: "https://ds055uzetaobb.cloudfront.net/brioche/uploads/Solving-Equations_13_3475-7025_LdhXDP.png?width=1080",
-          width: "fill",
-          align: "center",
-        },
-        {
-          id: "2",
+          id: crypto.randomUUID(),
           type: "text",
-          content:
-            "Combinations of known and unknown values are the building blocks equations. Let's get building.",
+          content: "Start writing.",
           align: "left",
           variant: "default",
           width: "fill",
@@ -78,7 +81,12 @@ const defaultLesson: Lesson = {
       type: "info",
     },
   ],
+  pathId: "",
+  levelId: "",
+  courseId: "",
 };
+
+type LocalSVLesson = { timestamp: Date; data: Lesson };
 
 export function EditorProvider({ children }: { children: React.ReactNode }) {
   const [lesson, setLesson] = useState<Lesson | null>(null);
@@ -86,35 +94,83 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
+  const searchParams = useSearchParams();
+
+  const recommendedSlideCount = 10;
+  const lessonProgress = lesson
+    ? Math.min((lesson.slides.length / recommendedSlideCount) * 100, 100)
+    : 0;
+  const estimatedDuration = lesson
+    ? Math.ceil(lesson.slides.length * 0.75) // 45 seconds per slide
+    : 0;
+
   useEffect(() => {
+    console.log("RE-RENDERING...");
+    const pathId = searchParams.get("pathId")?.split("__");
+    const levelId = searchParams.get("levelId")?.split("__");
+    const courseId = searchParams.get("courseId")?.split("__");
     const savedLesson = localStorage.getItem("currentLesson");
-    if (savedLesson) {
-      setLesson(JSON.parse(savedLesson) as Lesson);
-    } else {
-      setLesson(defaultLesson);
-      localStorage.setItem("currentLesson", JSON.stringify(defaultLesson));
+    const parsedLesson = savedLesson
+      ? (JSON.parse(savedLesson) as LocalSVLesson)
+      : null;
+
+    if (
+      parsedLesson &&
+      new Date(parsedLesson.timestamp).getTime() > Date.now() - 5000
+    ) {
+      setLesson(parsedLesson.data);
+      return;
     }
+
+    const newLesson: Lesson = {
+      ...defaultLesson,
+      path: pathId?.[1] ?? "Path",
+      level: levelId?.[1] ?? "Level 1",
+      course: courseId?.[1] ?? "Course",
+      pathId: pathId?.[0] ?? "",
+      levelId: levelId?.[0] ?? "",
+      courseId: courseId?.[0] ?? "",
+    };
+
+    setLesson(newLesson);
+    localStorage.setItem(
+      "currentLesson",
+      JSON.stringify({
+        timestamp: Date.now(),
+        data: newLesson,
+      }),
+    );
   }, []);
 
-  const updateLesson = (updatedLesson: Lesson) => {
-    setLesson(updatedLesson);
+  const updateLesson = useCallback((updatedLesson: Partial<Lesson>) => {
+    setLesson((prev) => ({
+      ...(prev ?? defaultLesson),
+      ...updatedLesson,
+    }));
     setHasUnsavedChanges(true);
-  };
+  }, []);
 
-  const addSlide = () => {
-    if (!lesson) return;
-    const newSlide: CardContentType = {
-      id: Date.now().toString(),
-      title: "Summary",
-      elements: null,
-      index: 0,
-      type: "info",
-    };
-    updateLesson({
-      ...lesson,
-      slides: [...lesson.slides, newSlide],
+  const addSlide = useCallback(() => {
+    setLesson((prev) => {
+      if (!prev) return prev;
+
+      const randomTitle =
+        titlesArr[Math.floor(Math.random() * titlesArr.length)];
+      const newSlide: CardContentType = {
+        id: crypto.randomUUID(), // Use proper UUID
+        title: randomTitle,
+        elements: [],
+        index: prev.slides.length, // Correct index
+        type: "info",
+      };
+
+      return {
+        ...prev,
+        slides: [...prev.slides, newSlide],
+      };
     });
-  };
+    setHasUnsavedChanges(true);
+  }, []);
 
   const removeSlide = (slideId: string) => {
     if (!lesson) return;
@@ -188,7 +244,9 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     const imageElement: ContentElement = {
       id: crypto.randomUUID(),
       type: "image",
-      uri,
+      uri:
+        uri ??
+        "https://adaptcommunitynetwork.org/wp-content/uploads/2022/01/ef3-placeholder-image.jpg",
       width: "fill",
       align: "center",
     };
@@ -215,6 +273,8 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
       width: "fill",
       align: "center",
     };
+
+    updateLesson({});
     addElementToSlide(choiceElement);
   };
 
@@ -382,9 +442,20 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
 
   const saveLesson = () => {
     if (lesson) {
-      localStorage.setItem("currentLesson", JSON.stringify(lesson));
+      localStorage.setItem(
+        "currentLesson",
+        JSON.stringify({ timestamp: Date.now(), data: lesson }),
+      );
+      console.log("saved LESSON", lesson);
       setHasUnsavedChanges(false);
     }
+  };
+
+  const getElementType = (elementId: string): ElementType | null => {
+    return (
+      lesson?.slides[currentSlide]?.elements?.find((el) => el.id === elementId)
+        ?.type ?? null
+    );
   };
 
   return (
@@ -413,6 +484,10 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
         moveElementDown,
         moveElementUp,
         addKatexExpression,
+        getElementType,
+        lessonProgress,
+        estimatedDuration,
+        recommendedSlideCount,
       }}
     >
       {children}

@@ -43,6 +43,11 @@ const config = {
         hostname: "sjc.microlink.io",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "adaptcommunitynetwork.org",
+        port: "",
+      },
     ],
   },
 };

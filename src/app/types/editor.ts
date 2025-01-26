@@ -5,8 +5,11 @@ export interface Lesson {
   title: string;
   description: string;
   path: string;
+  pathId: string;
   level: string;
+  levelId: string;
   course: string;
+  courseId: string;
   slides: CardContentType[];
   duration: number;
 }

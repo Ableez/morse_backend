@@ -13,7 +13,7 @@ export default function Editor({
 }) {
   const { lessonId } = use(params);
 
-  if (lessonId !== "new") {
+  if (!lessonId.split("__").includes("new")) {
     return <div>Edit existing lesson later</div>;
   }
 

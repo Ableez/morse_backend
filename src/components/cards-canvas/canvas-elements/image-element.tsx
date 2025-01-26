@@ -9,14 +9,12 @@ type ImageElementProps = {
 
 export function ImageElement({ element }: ImageElementProps) {
   return (
-    <div
-      className={`relative ${element.width === "fill" ? "w-full" : "w-auto"}`}
-    >
+    <div className={`h-32 ${element.width === "fill" ? "w-full" : "w-auto"}`}>
       <Image
         fill
         src={element.uri || "/placeholder.svg"}
         alt="Slide content"
-        className="object-contain"
+        className="h-full w-full object-contain"
       />
     </div>
   );
