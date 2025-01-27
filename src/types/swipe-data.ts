@@ -811,10 +811,10 @@ export const titlesArr = [
 //   },
 // ];
 
-const generateUID = (): string => {
-  //This is a placeholder, for a production environment use a proper UUID library
-  return Math.random().toString(16).substring(2, 10);
-};
+// const generateUID = (): string => {
+//   //This is a placeholder, for a production environment use a proper UUID library
+//   return Math.random().toString(16).substring(2, 10);
+// };
 
 // export const log: CardContentType[] = [
 //   {

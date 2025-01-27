@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { useEditor } from "../contexts/editor-context"
+import { useEditor } from "./cards-canvas/editor-context"
 
 export function UnsavedChangesAlert() {
   const { hasUnsavedChanges } = useEditor()

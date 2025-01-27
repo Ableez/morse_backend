@@ -2,46 +2,13 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import {
-  BookOpen,
-  CheckCircle2,
-  Clock,
-  PenBox,
-  Trash2Icon,
-} from "lucide-react";
+import { BookOpen, PenBox, Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { LearningPathAllRelations } from "@/server/db/schema";
-
-interface Course {
-  id: string;
-  title: string;
-  slug: string;
-  imageUrl: string;
-  percentComplete: number;
-  isUpdated: boolean;
-  desktopOnly: boolean;
-}
-
-interface Level {
-  id: string;
-  number: number;
-  courses: Course[];
-}
-
-interface LearningPath {
-  id: string;
-  title: string;
-  description: string | null;
-  imageUrl: string;
-  isEnrolled: boolean;
-  percentComplete: number;
-  levels: Level[];
-}
+import type { LearningPathAllRelations } from "@/server/db/schema";
 
 export default function PathView({ path }: { path: LearningPathAllRelations }) {
   return (

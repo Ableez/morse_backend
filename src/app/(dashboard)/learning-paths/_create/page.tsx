@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,11 +37,7 @@ const formSchema = z.object({
   imageUrl: z.string().url().optional().or(z.literal("")),
 });
 
-type Props = {
-  params: Promise<{ pathId: string }>;
-};
-export default function CreateLearningPathForm({ params }: Props) {
-  const { pathId } = use(params);
+export default function CreateLearningPathForm() {
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState(
     "https://media.istockphoto.com/id/1907918459/photo/white-checkered-crumpled-paper-background.webp?a=1&b=1&s=612x612&w=0&k=20&c=q6wJaVMIMjE4CUtGhaEhErO1QiimBEYw6cbBoIdcWak=",
@@ -67,6 +63,7 @@ export default function CreateLearningPathForm({ params }: Props) {
       });
       router.push("/learning-paths");
     } catch (error) {
+      console.error(error);
       toast({
         title: "Error",
         description: "Failed to create learning path",

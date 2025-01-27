@@ -34,7 +34,7 @@ export function KatexElement({ element }: KatexElementProps) {
       className={`${isDisplayMode ? "my-4 block w-full" : "inline"} cursor-pointer`}
       onClick={() =>
         updateElement(element.id, {
-          content: prompt("Edit LaTeX:", element.content) || element.content,
+          content: prompt("Edit LaTeX:", element.content) ?? element.content,
         })
       }
     />

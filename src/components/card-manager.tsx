@@ -5,7 +5,6 @@ import { useCards } from "@/hooks/use-cards";
 import Image from "next/image";
 import type {
   LearningPathAllRelations,
-  LearningPathWithRelations,
 } from "../server/db/schema";
 import { ArrowLeft } from "lucide-react";
 

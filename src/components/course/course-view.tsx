@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback } from "react";
 
 export default function CourseView({
@@ -23,7 +23,6 @@ export default function CourseView({
 }) {
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const createQueryString = useCallback(

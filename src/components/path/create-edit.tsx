@@ -64,7 +64,7 @@ export default function CreateEditLearningPathForm({ pathId, colors }: Props) {
   );
   const [colorSchemeId, setCOlorSchemeId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isDirty, setIsDirty] = useState(false);
+  const [, setIsDirty] = useState(false);
 
   const createPath = api.learning.createLearningPath.useMutation();
   const updatePath = api.learning.updateLearningPath.useMutation();

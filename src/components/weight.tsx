@@ -1,6 +1,4 @@
 import React from "react";
-import IconText from "./icon-text";
-import { text } from "drizzle-orm/sqlite-core";
 
 function Weight({
   size = 355,

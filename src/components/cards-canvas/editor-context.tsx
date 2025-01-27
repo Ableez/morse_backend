@@ -10,7 +10,7 @@ import {
   type ElementType,
   type TextType,
 } from "@/types/swipe-data";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   createContext,
   useContext,
@@ -140,7 +140,7 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
         data: newLesson,
       }),
     );
-  }, []);
+  }, [searchParams]);
 
   const updateLesson = useCallback((updatedLesson: Partial<Lesson>) => {
     setLesson((prev) => ({

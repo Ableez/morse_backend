@@ -6,8 +6,12 @@ import { api } from "@/trpc/server";
 import { Loader2 } from "lucide-react";
 import React, { Suspense } from "react";
 
-const AllPaths = async ({ params }: { params: { slug: string[] } }) => {
-  const slugs = params.slug;
+const AllPaths = async ({
+  params,
+}: {
+  params: Promise<{ slugs: string[] }>;
+}) => {
+  const { slugs } = await params;
 
   if (slugs && slugs.length > 0) {
     const [pathId, levelId, courseId] = slugs;
@@ -19,11 +23,12 @@ const AllPaths = async ({ params }: { params: { slug: string[] } }) => {
 
     if (levelId && !courseId) {
       const level = await api.learning.getLevelById(levelId);
+      if (!level) return "Level not found";
       return <LevelInfo level={level} />;
     }
 
     if (courseId) {
-      const course = await api.learning.getCourseById(courseId);
+      const course = await api.learning.getCourseById({ courseId });
       return <CourseInfo course={course} />;
     }
   }

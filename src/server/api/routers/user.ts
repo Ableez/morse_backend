@@ -73,17 +73,19 @@ export const userRouter = createTRPCRouter({
           clerkId: rest.id.toString(),
           email: primaryEmail.email_address,
           emailVerified: primaryEmail.verification.status === "verified",
-          imageUrl: rest.image_url,
-          profileImageUrl: rest.profile_image_url,
-          username: rest.username ?? undefined,
-          displayName: `${rest.first_name} ${rest.last_name}`,
-          birthday: rest.birthday ? new Date(rest.birthday) : null,
-          gender: rest.gender,
+          imageUrl: rest.image_url ?? null,
+          profileImageUrl: rest.profile_image_url ?? null,
+          username: rest.username ?? null,
+          displayName: `${rest.first_name ?? ""} ${rest.last_name ?? ""}`,
+          birthday: rest.birthday
+            ? new Date(rest.birthday).toISOString()
+            : null,
+          gender: rest.gender ?? null,
           passwordEnabled: rest.password_enabled,
           twoFactorEnabled: rest.two_factor_enabled,
-          externalId: rest.external_id,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
+          metadata: rest.metadata ?? null,
         });
       } catch (error) {
         console.error("[INTERNAL_ERROR]", error);
