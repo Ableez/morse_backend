@@ -7,7 +7,7 @@ type Props = {
   params: Promise<{ pathId: string }>;
 };
 
-const PathId = async ({ params }: Props) => {
+const PathViewPage = async ({ params }: Props) => {
   const { pathId } = await params;
   const path = await api.learning.getPathById(pathId);
 
@@ -18,4 +18,4 @@ const PathId = async ({ params }: Props) => {
   return <PathView path={path as LearningPathAllRelations} />;
 };
 
-export default PathId;
+export default PathViewPage;

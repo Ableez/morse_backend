@@ -1,0 +1,1 @@
+ALTER TABLE "morse_courses" ALTER COLUMN "description" DROP NOT NULL;

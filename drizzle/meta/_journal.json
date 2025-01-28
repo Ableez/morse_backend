@@ -71,6 +71,27 @@
       "when": 1737659364069,
       "tag": "0009_lively_leo",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1738070154779,
+      "tag": "0010_curly_zaladane",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1738070212302,
+      "tag": "0011_regular_kronos",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1738070536242,
+      "tag": "0012_cool_prowler",
+      "breakpoints": true
     }
   ]
 }

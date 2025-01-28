@@ -63,6 +63,7 @@ export const learningRouter = createTRPCRouter({
           where: eq(courses.id, paramId),
           with: {
             lessons: true,
+            learningPath: true,
           },
         });
 
@@ -353,6 +354,112 @@ export const learningRouter = createTRPCRouter({
               orderBy: (entries, { desc }) => [desc(entries.points)],
               limit: 10,
             },
+          },
+        });
+
+        if (!path) {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        }
+
+        return path;
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
+    }),
+
+  createCourse: publicProcedure
+    .input(
+      z.object({
+        title: z.string().min(3).max(100),
+        slug: z.string().min(3).max(50),
+        description: z.string().max(500).optional(),
+        imageUrl: z.string().url().optional().or(z.literal("")),
+        levelId: z.string().uuid(),
+        pathId: z.string().uuid(),
+        desktopOnly: z.boolean().optional(),
+        retiringOn: z.string().optional().nullable(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const newCourse = await ctx.db
+          .insert(courses)
+          .values({
+            ...input,
+            retiringOn: input.retiringOn,
+            description: input.description ?? "",
+          })
+          .returning();
+        return newCourse[0];
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
+    }),
+
+  updateCourse: publicProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        imageUrl: z.string().optional(),
+        desktopOnly: z.boolean().optional(),
+        retiringOn: z.string().optional().nullable(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const { id, ...updateData } = input;
+        const updatedCourse = await ctx.db
+          .update(courses)
+          .set(updateData)
+          .where(eq(courses.id, id))
+          .returning();
+        if (!updatedCourse.length) {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        }
+        return updatedCourse[0];
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
+    }),
+
+  createLevel: publicProcedure
+    .input(
+      z.object({
+        title: z.string().min(2).max(50),
+        description: z.string().max(500).optional(),
+        imageUrl: z.string().url().optional().or(z.literal("")),
+        index: z.coerce.number(),
+        pathId: z.string().uuid(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const newLevel = await ctx.db
+          .insert(levels)
+          .values({ ...input, number: input.index })
+          .returning();
+
+        return newLevel[0];
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
+    }),
+
+  getSimplePathById: publicProcedure
+    .input(z.string().uuid())
+    .query(async ({ ctx, input }) => {
+      try {
+        const path = await ctx.db.query.learningPaths.findFirst({
+          where: eq(learningPaths.id, input),
+          with: {
+            colorScheme: true,
+            levels: true,
           },
         });
 

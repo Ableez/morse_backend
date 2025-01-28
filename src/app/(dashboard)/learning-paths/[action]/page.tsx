@@ -13,7 +13,7 @@ const LearningPathActionPage = async ({ params }: Props) => {
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="mb-8 text-lg md:px-0 px-4 md:text-4xl font-bold">
+      <h1 className="mb-8 px-4 text-lg font-bold md:px-0 md:text-4xl">
         {isEdit ? "Edit Learning Path" : "Create New Learning Path"}
       </h1>
       <CreateEditLearningPathForm colors={colors} pathId={pathId} />
