@@ -9,8 +9,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import type { LearningPathAllRelations } from "@/server/db/schema";
+import { IconEdit } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 
 export default function PathView({ path }: { path: LearningPathAllRelations }) {
+  const router = useRouter();
+
   return (
     <div className="container mx-auto p-6">
       <div className="mb-8 flex place-items-center justify-between align-middle">
@@ -92,51 +96,58 @@ export default function PathView({ path }: { path: LearningPathAllRelations }) {
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {level.courses?.map((course) => (
-                <Link
-                  key={course.id}
-                  href={`/course/${course.id}`}
-                  className="h-[16.5rem]"
-                >
-                  <Card className="group h-full rounded-3xl border-2 border-b-8 shadow-none transition-all hover:translate-y-1 hover:border-b-2">
-                    <CardContent className="p-6">
-                      <div className="relative mb-4 aspect-video overflow-hidden rounded-lg">
-                        <div
-                          className={`h-full w-full p-6`}
-                          style={{
-                            backgroundColor:
-                              path.colorScheme?.s800 ?? "skyblue",
-                          }}
-                        >
-                          <Image
-                            src={course.imageUrl ?? "/placeholder.svg"}
-                            alt={course.title}
-                            width={200}
-                            height={200}
-                            className="h-full w-full object-contain transition-transform group-hover:scale-105"
-                          />
+                <div className="relative" key={course.id}>
+                  <Link href={`/course/${course.id}`} className="h-[16.5rem]">
+                    <Card className="group h-full rounded-3xl border-2 border-b-8 shadow-none transition-all hover:translate-y-1 hover:border-b-2">
+                      <CardContent className="p-6">
+                        <div className="relative mb-4 aspect-video overflow-hidden rounded-lg">
+                          <div
+                            className={`h-full w-full p-6`}
+                            style={{
+                              backgroundColor:
+                                path.colorScheme?.s800 ?? "skyblue",
+                            }}
+                          >
+                            <Image
+                              src={course.imageUrl ?? "/placeholder.svg"}
+                              alt={course.title}
+                              width={200}
+                              height={200}
+                              className="h-full w-full object-contain transition-transform group-hover:scale-105"
+                            />
+                          </div>
+                          {course.isUpdated && (
+                            <Badge className="absolute right-2 top-2 bg-blue-500 text-white hover:bg-blue-600">
+                              NEW
+                            </Badge>
+                          )}
                         </div>
-                        {course.isUpdated && (
-                          <Badge className="absolute right-2 top-2 bg-blue-500 text-white hover:bg-blue-600">
-                            NEW
-                          </Badge>
+                        <h3 className="mt-2 text-[11px] font-medium text-neutral-400">
+                          LEVEL {course.levelNumber ?? level.number}
+                        </h3>
+                        <h3 className="font-semibold">{course.title}</h3>
+                        <p className="text-sm font-medium text-neutral-600">
+                          {course.description}
+                        </p>
+                        {course.desktopOnly && (
+                          <div className="text-muted-foreground mt-2 flex items-center gap-2 text-sm">
+                            <BookOpen className="h-4 w-4" />
+                            <span>Desktop only</span>
+                          </div>
                         )}
-                      </div>
-                      <h3 className="mt-2 text-[11px] font-medium text-neutral-400">
-                        LEVEL {course.levelNumber ?? level.number}
-                      </h3>
-                      <h3 className="font-semibold">{course.title}</h3>
-                      <p className="text-sm font-medium text-neutral-600">
-                        {course.description}
-                      </p>
-                      {course.desktopOnly && (
-                        <div className="text-muted-foreground mt-2 flex items-center gap-2 text-sm">
-                          <BookOpen className="h-4 w-4" />
-                          <span>Desktop only</span>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Link>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                  <button
+                    className="absolute right-2 top-2 grid aspect-square w-10 place-items-center rounded-full bg-black/10 p-2 align-middle"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/course/action/${course.id}`);
+                    }}
+                  >
+                    <IconEdit width={20} strokeWidth={2.4} />
+                  </button>
+                </div>
               ))}
             </div>
           </div>

@@ -261,13 +261,14 @@ export const courses = createTable(
     pathId: uuid("path_id").notNull(),
     title: varchar("title").notNull(),
     description: varchar("description"),
-    slug: varchar("slug").notNull(),
+    slug: varchar("slug").notNull(),  
     imageUrl: varchar("image_url"),
     percentComplete: integer("percent_complete").default(0),
     isUpdated: boolean("is_updated").default(false),
     desktopOnly: boolean("desktop_only").default(false),
     retiringOn: timestamp("retiring_on", { mode: "string" }),
     levelNumber: integer("level_number"),
+    courseIndex: integer("course_index")
   },
   (table) => {
     return {

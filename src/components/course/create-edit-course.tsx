@@ -11,7 +11,10 @@ import { api } from "@/trpc/react";
 import Image from "next/image";
 import { Stars } from "lucide-react";
 import { isValidUrl } from "@/lib/utils";
-import type { LearningPathWithRelations } from "@/server/db/schema";
+import type {
+  CourseWithRelations,
+  LearningPathWithRelations,
+} from "@/server/db/schema";
 import CreateLevelDialog from "../dialogs/create-level";
 import { toast } from "@/hooks/use-toast";
 
@@ -35,28 +38,33 @@ type FormData = z.infer<typeof formSchema>;
 interface CreateEditCourseFormProps {
   courseId?: string;
   learningPathData: LearningPathWithRelations;
+  courseData?: CourseWithRelations;
 }
 
 export default function CreateEditCourseForm({
   courseId,
   learningPathData,
+  courseData,
 }: CreateEditCourseFormProps) {
   const router = useRouter();
   const [formData, setFormData] = useState<Partial<FormData>>({
-    title: "",
-    slug: "",
-    description: "",
-    imageUrl: "",
-    pathId: learningPathData.id,
+    title: courseData?.title ?? "",
+    slug: courseData?.slug ?? "",
+    description: courseData?.description ?? "",
+    imageUrl: courseData?.imageUrl ?? "",
+    pathId: courseData?.pathId ?? learningPathData.id,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>(
     {},
   );
   const [previewImage, setPreviewImage] = useState(
-    "https://media.istockphoto.com/id/1907918459/photo/white-checkered-crumpled-paper-background.webp?a=1&b=1&s=612x612&w=0&k=20&c=q6wJaVMIMjE4CUtGhaEhErO1QiimBEYw6cbBoIdcWak=",
+    courseData?.imageUrl ??
+      "https://media.istockphoto.com/id/1907918459/photo/white-checkered-crumpled-paper-background.webp?a=1&b=1&s=612x612&w=0&k=20&c=q6wJaVMIMjE4CUtGhaEhErO1QiimBEYw6cbBoIdcWak=",
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<string | null>(
+    courseData?.levelId ?? null,
+  );
 
   const createCourse = api.learning.createCourse.useMutation();
   const updateCourse = api.learning.updateCourse.useMutation();
@@ -151,8 +159,9 @@ export default function CreateEditCourseForm({
 
       if (courseId) {
         await updateCourse.mutateAsync({
-          id: courseId,
           ...submissionData,
+          id: courseId,
+          levelId: selectedLevel,
         });
         toast({
           title: "Success",
@@ -304,17 +313,24 @@ export default function CreateEditCourseForm({
         <h2 className="mb-4 text-base font-semibold md:text-2xl">Preview</h2>
         <CardContent className="p-0 pt-8">
           <div className="mx-auto w-full cursor-pointer overflow-clip rounded-3xl border-2 border-b-8 bg-white transition-all duration-300 ease-out hover:-translate-y-2 active:translate-y-1 active:scale-[0.98] active:border-b-2 md:w-[80%]">
-            <div className="w-full bg-white pt-4">
+            <div className="w-full bg-blue-100 p-4">
               <Image
                 src={previewImage || "/placeholder.svg"}
                 alt="Course Preview"
-                width={200}
-                height={200}
-                className="mx-auto aspect-square object-cover"
+                width={140}
+                height={140}
+                className="mx-auto object-cover h-40"
               />
             </div>
 
             <div className="flex min-h-24 flex-col justify-center px-4 py-4">
+              <p className="text-xs font-medium text-blue-600/80">
+                {learningPathData.title} &middot; Level{" "}
+                {
+                  learningPathData.levels?.find((l) => l.id === selectedLevel)
+                    ?.number
+                }
+              </p>
               <h3 className="mb-1 text-xl font-bold text-black">
                 {formData.title?.trim() ?? "Course Title"}
               </h3>

@@ -48,6 +48,11 @@ const config = {
         hostname: "adaptcommunitynetwork.org",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "img.icons8.com",
+        port: "",
+      },
     ],
   },
 };

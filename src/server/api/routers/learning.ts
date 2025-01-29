@@ -407,6 +407,7 @@ export const learningRouter = createTRPCRouter({
         imageUrl: z.string().optional(),
         desktopOnly: z.boolean().optional(),
         retiringOn: z.string().optional().nullable(),
+        levelId: z.string().uuid().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

@@ -154,6 +154,9 @@ export async function AppSidebar({
 }: React.ComponentProps<typeof Sidebar>) {
   const user = await currentUser();
 
+  if (!user)
+    return <div className="text-center text-sm font-bold">No user</div>;
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>

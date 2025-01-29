@@ -30,6 +30,34 @@ const CourseActionPage = async ({ params }: Props) => {
       </div>
     );
   }
+
+  const courseData = await api.learning.getCourseById({ courseId: actionId });
+  if (!courseData) {
+    return <div>Course not found</div>;
+  }
+
+  console.log("COURSE DATA: ", courseData);
+
+  const learningPathData = await api.learning.getPathById(courseData.pathId);
+  if (!learningPathData) {
+    return <div>Course is not valid, contact support</div>;
+  }
+
+  return (
+    <div className="container mx-auto py-10">
+      <div className="px-8">
+        <h1 className="mb-8 text-base font-bold md:px-0 md:text-4xl">
+          Edit course
+        </h1>
+      </div>
+
+      <CreateEditCourseForm
+        learningPathData={learningPathData}
+        courseId={isEdit ? actionId : undefined}
+        courseData={courseData}
+      />
+    </div>
+  );
 };
 
 export default CourseActionPage;
