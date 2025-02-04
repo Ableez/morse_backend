@@ -1,14 +1,14 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
+import { Badge } from "#/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "#/components/ui/card";
+import { Separator } from "#/components/ui/separator";
+import { cn } from "#/lib/utils";
 import { BookOpen, PenBox, Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import type { LearningPathAllRelations } from "@/server/db/schema";
+import type { LearningPathAllRelations } from "#/server/db/schema";
 import { IconEdit } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import type { OptionsElement } from "@/types/swipe-data";
+import type { OptionsElement } from "#/types/swipe-data";
 
 type OptionsElementProps = {
   element: OptionsElement;

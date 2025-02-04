@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { ImageElement } from "@/types/swipe-data";
+import type { ImageElement } from "#/types/swipe-data";
 
 type ImageElementProps = {
   element: ImageElement;

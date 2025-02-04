@@ -1,5 +1,5 @@
-import CourseView from "@/components/course/course-view";
-import { api } from "@/trpc/server";
+import CourseView from "#/components/course/course-view";
+import { api } from "#/trpc/server";
 import React from "react";
 
 type Props = {

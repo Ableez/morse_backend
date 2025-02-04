@@ -1,6 +1,6 @@
-import PathView from "@/components/path/path-view";
-import type { LearningPathAllRelations } from "@/server/db/schema";
-import { api } from "@/trpc/server";
+import PathView from "#/components/path/path-view";
+import type { LearningPathAllRelations } from "#/server/db/schema";
+import { api } from "#/trpc/server";
 import React from "react";
 
 type Props = {

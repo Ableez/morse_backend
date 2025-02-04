@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "#/components/ui/button";
 import { Type, ImageIcon, List, Sigma } from "lucide-react";
 import { IconSlideshow } from "@tabler/icons-react";
 import { useEditor } from "./editor-context";

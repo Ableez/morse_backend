@@ -1,8 +1,8 @@
-import type { LearningPathWithRelations } from "@/server/db/schema";
+import type { LearningPathWithRelations } from "#/server/db/schema";
 import Image from "next/image";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "#/components/ui/card";
+import { Button } from "#/components/ui/button";
 
 type Props = {
   path: LearningPathWithRelations;
@@ -16,7 +16,7 @@ const PathInfo = ({ path }: Props) => {
   }
 
   return (
-    <Card className="mx-auto max-w-3xl mt-32">
+    <Card className="mx-auto mt-32 max-w-3xl">
       <CardHeader className="flex flex-row items-center gap-4">
         <Image
           src={path.imageUrl ?? "/3d_empty.png"}

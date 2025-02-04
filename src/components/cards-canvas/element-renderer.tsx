@@ -6,7 +6,7 @@ import type {
   ContentElement as ContentElementType,
   ImageElement as ImageElementType,
   OptionsElement as OptionsElementType,
-} from "@/types/swipe-data";
+} from "#/types/swipe-data";
 import { ImageElement } from "./canvas-elements/image-element";
 import { OptionsElement } from "./canvas-elements/option-element";
 import { KatexElement } from "./canvas-elements/katex-element";

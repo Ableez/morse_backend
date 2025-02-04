@@ -11,7 +11,7 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import { verify } from "jsonwebtoken";
 import { z, ZodError } from "zod";
 
-import { db } from "@/server/db";
+import { db } from "#/server/db";
 import { auth } from "@clerk/nextjs/server";
 
 /**

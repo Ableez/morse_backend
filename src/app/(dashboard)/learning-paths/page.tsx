@@ -1,4 +1,4 @@
-import { api } from "@/trpc/server";
+import { api } from "#/trpc/server";
 import React from "react";
 
 const LearningPath = async () => {

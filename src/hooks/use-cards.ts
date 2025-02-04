@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
-import type { CardContent, Content } from "@/types/content";
-import { storage } from "@/lib/storage";
-import { api } from "@/trpc/react";
-import type { LearningPathWithRelations } from "@/server/db/schema";
+import type { CardContent, Content } from "#/types/content";
+import { storage } from "#/lib/storage";
+import { api } from "#/trpc/react";
+import type { LearningPathWithRelations } from "#/server/db/schema";
 
 const DEFAULT_CARD: CardContent = {
   id: crypto.randomUUID(),

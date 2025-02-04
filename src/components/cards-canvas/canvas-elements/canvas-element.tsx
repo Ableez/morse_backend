@@ -4,7 +4,7 @@ import { ElementRenderer } from "../element-renderer";
 import { FloatingToolbar } from "../floating-toolbar";
 import { useEditor } from "../editor-context";
 import { memo } from "react";
-import type { ContentElement } from "@/types/swipe-data";
+import type { ContentElement } from "#/types/swipe-data";
 
 type CanvasElementProps = {
   element: ContentElement;

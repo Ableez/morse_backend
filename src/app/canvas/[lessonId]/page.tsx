@@ -1,9 +1,9 @@
 "use client";
 
-import { Canvas } from "@/components/cards-canvas/canvas";
-import { EditorProvider } from "@/components/cards-canvas/editor-context";
-import { Sidebar } from "@/components/sidebar";
-import { Toolbar } from "@/components/cards-canvas/toolbar";
+import { Canvas } from "#/components/cards-canvas/canvas";
+import { EditorProvider } from "#/components/cards-canvas/editor-context";
+import { Sidebar } from "#/components/sidebar";
+import { Toolbar } from "#/components/cards-canvas/toolbar";
 import { use } from "react";
 
 export default function Editor({

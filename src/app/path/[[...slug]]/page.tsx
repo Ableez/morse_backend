@@ -1,8 +1,8 @@
-import ListPaths from "@/components/path/list";
-import PathInfo from "@/components/path/path-info";
-import LevelInfo from "@/components/level/level-info";
-import CourseInfo from "@/components/course/course-info";
-import { api } from "@/trpc/server";
+import ListPaths from "#/components/path/list";
+import PathInfo from "#/components/path/path-info";
+import LevelInfo from "#/components/level/level-info";
+import CourseInfo from "#/components/course/course-info";
+import { api } from "#/trpc/server";
 import { Loader2 } from "lucide-react";
 import React, { Suspense } from "react";
 

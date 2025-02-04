@@ -1,6 +1,6 @@
-import type { LevelWithRelations } from "@/server/db/schema";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import type { LevelWithRelations } from "#/server/db/schema";
+import { Card, CardContent, CardHeader, CardTitle } from "#/components/ui/card";
+import { Button } from "#/components/ui/button";
 import Link from "next/link";
 
 type Props = {

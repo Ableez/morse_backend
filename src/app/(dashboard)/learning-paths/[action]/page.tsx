@@ -1,5 +1,5 @@
-import CreateEditLearningPathForm from "@/components/path/create-edit";
-import { api } from "@/trpc/server";
+import CreateEditLearningPathForm from "#/components/path/create-edit";
+import { api } from "#/trpc/server";
 
 type Props = {
   params: Promise<{ action: string }>;

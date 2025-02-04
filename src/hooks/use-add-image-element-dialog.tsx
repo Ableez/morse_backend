@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { UploadDropzone } from "@/lib/uploadthing";
-import { useToast } from "@/hooks/use-toast";
+import { UploadDropzone } from "#/lib/uploadthing";
+import { useToast } from "#/hooks/use-toast";
 import {
   Dialog,
   DialogClose,
   DialogContent,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+} from "#/components/ui/dialog";
+import { Input } from "#/components/ui/input";
 
 type Props = {
   onUploadComplete: (url: string) => void;

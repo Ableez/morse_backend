@@ -1,7 +1,7 @@
 // spacing-control.tsx
 "use client";
 
-import { Input } from "@/components/ui/input";
+import { Input } from "#/components/ui/input";
 import { memo } from "react";
 
 type SpacingControlProps = {

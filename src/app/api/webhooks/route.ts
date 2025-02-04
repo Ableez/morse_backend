@@ -1,9 +1,9 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
-import { env } from "@/env";
+import { env } from "#/env";
 import type { WebhookEvent } from "@clerk/nextjs/server";
-import { api } from "@/trpc/server";
-import type { UserDataType } from "@/server/api/routers/user";
+import { api } from "#/trpc/server";
+import type { UserDataType } from "#/server/api/routers/user";
 
 type UpdateUserEvtData = {
   id: string;

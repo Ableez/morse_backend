@@ -1,11 +1,11 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "#/components/ui/input";
+import { Button } from "#/components/ui/button";
 import { AlignLeft, AlignCenter, AlignRight, AlignJustify } from "lucide-react";
 import { useEditor } from "./editor-context";
 import { memo } from "react";
-import type { ContentElement } from "@/types/swipe-data";
+import type { ContentElement } from "#/types/swipe-data";
 
 const ALIGNMENT_OPTIONS = [
   { value: "left", Icon: AlignLeft },

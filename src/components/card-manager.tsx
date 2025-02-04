@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import type { CardContent } from "@/types/content";
-import { useCards } from "@/hooks/use-cards";
+import { Button } from "#/components/ui/button";
+import type { CardContent } from "#/types/content";
+import { useCards } from "#/hooks/use-cards";
 import Image from "next/image";
-import type {
-  LearningPathAllRelations,
-} from "../server/db/schema";
+import type { LearningPathAllRelations } from "../server/db/schema";
 import { ArrowLeft } from "lucide-react";
 
 interface CardManagerProps {

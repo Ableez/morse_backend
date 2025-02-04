@@ -1,6 +1,6 @@
 "use client";
 
-import type { LearningPathWithRelations } from "@/server/db/schema";
+import type { LearningPathWithRelations } from "#/server/db/schema";
 import { usePathname } from "next/navigation";
 import PathItem from "./path-item";
 

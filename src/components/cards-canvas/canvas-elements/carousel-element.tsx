@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { CarouselElement } from "@/types/swipe-data";
+import type { CarouselElement } from "#/types/swipe-data";
 
 type CarouselElementProps = {
   element: CarouselElement;

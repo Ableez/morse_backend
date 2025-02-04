@@ -7,11 +7,11 @@ import {
   type DropResult,
 } from "@hello-pangea/dnd";
 import { ChevronDown, ChevronUp, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "#/components/ui/button";
+import { Card } from "#/components/ui/card";
 import { useEditor } from "./cards-canvas/editor-context";
 import { IconTrash } from "@tabler/icons-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "#/hooks/use-toast";
 import { useRef } from "react";
 
 export function Sidebar() {

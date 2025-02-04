@@ -2,7 +2,7 @@
 
 import { useEditor } from "./editor-context";
 import { memo } from "react";
-import type { ContentElement } from "@/types/swipe-data";
+import type { ContentElement } from "#/types/swipe-data";
 import { TextElementSettings } from "./text-element-settings";
 import { ElementWidthControl } from "./element-width-control";
 import { SpacingControl } from "./spacing-control";

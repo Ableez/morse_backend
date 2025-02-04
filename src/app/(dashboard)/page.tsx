@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "#/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { api } from "@/trpc/server";
+import { api } from "#/trpc/server";
 
 export default async function LearningPathsDashboard() {
   const learningPaths = await api.learning.getAllPaths();
@@ -9,7 +9,9 @@ export default async function LearningPathsDashboard() {
   return (
     <div className="container mx-auto p-2 md:p-8">
       <div className="flex place-items-center justify-between gap-4 align-middle">
-        <h1 className="mb-4 text-2xl font-bold hidden md:block">Learning Paths Dashboard</h1>
+        <h1 className="mb-4 hidden text-2xl font-bold md:block">
+          Learning Paths Dashboard
+        </h1>
 
         <div className="mb-4 flex">
           <Link href={"/learning-paths/new"}>

@@ -10,7 +10,7 @@ import {
   leaderboard,
   swipeCards,
   levels,
-} from "@/server/db/schema";
+} from "#/server/db/schema";
 import { TRPCError } from "@trpc/server";
 
 // Zod schemas for content validation

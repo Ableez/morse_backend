@@ -1,18 +1,18 @@
 "use client";
 
 import { useCallback } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "#/components/ui/button";
 import { PlusIcon, TextIcon as LetterTextIcon, ImageIcon } from "lucide-react";
-import Canvas from "@/components/old-canvas";
+import Canvas from "#/components/old-canvas";
 import {
   type Content,
   type TextContent,
   type ImageContent,
   isTextContent,
   isImageContent,
-} from "@/types/content";
-import { useCards } from "@/hooks/use-cards";
-import CardManager from "@/components/card-manager";
+} from "#/types/content";
+import { useCards } from "#/hooks/use-cards";
+import CardManager from "#/components/card-manager";
 
 // Props Types
 interface TemplateItemProps {

@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 "use client";
 
-import { type Lesson } from "@/app/types/editor";
-import { arrayMove } from "@/lib/utils";
+import { type Lesson } from "#/app/types/editor";
+import { arrayMove } from "#/lib/utils";
 import {
   titlesArr,
   type CardContentType,
   type ContentElement,
   type ElementType,
   type TextType,
-} from "@/types/swipe-data";
+} from "#/types/swipe-data";
 import { useSearchParams } from "next/navigation";
 import {
   createContext,

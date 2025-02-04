@@ -1,35 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import { api } from "@/trpc/react";
+import { Button } from "#/components/ui/button";
+import { Input } from "#/components/ui/input";
+import { Textarea } from "#/components/ui/textarea";
+import { Card, CardContent } from "#/components/ui/card";
+import { api } from "#/trpc/react";
 import Image from "next/image";
 import { Stars } from "lucide-react";
-import { isValidUrl } from "@/lib/utils";
+import { isValidUrl } from "#/lib/utils";
 import type {
   CourseWithRelations,
   LearningPathWithRelations,
-} from "@/server/db/schema";
+} from "#/server/db/schema";
 import CreateLevelDialog from "../dialogs/create-level";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "#/hooks/use-toast";
 
 const formSchema = z.object({
-  title: z.string().min(3).max(100),
+  title: z.string().min(3, "Title must be at least 3 characters").max(100),
   slug: z
     .string()
     .min(3)
     .max(50)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
-      message: "Slug must be lowercase, numbers, and hyphens only",
-    }),
+    .regex(
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+      "Slug must be lowercase, numbers, and hyphens only",
+    ),
   description: z.string().max(500).optional(),
   imageUrl: z.string().url().optional().or(z.literal("")),
-  levelId: z.string().uuid(),
+  levelId: z.string().uuid("Please select a level"),
   pathId: z.string().uuid(),
 });
 
@@ -41,138 +44,85 @@ interface CreateEditCourseFormProps {
   courseData?: CourseWithRelations;
 }
 
+const FORM_STORAGE_KEY = "courseFormState";
+
 export default function CreateEditCourseForm({
   courseId,
   learningPathData,
   courseData,
 }: CreateEditCourseFormProps) {
   const router = useRouter();
-  const [formData, setFormData] = useState<Partial<FormData>>({
-    title: courseData?.title ?? "",
-    slug: courseData?.slug ?? "",
-    description: courseData?.description ?? "",
-    imageUrl: courseData?.imageUrl ?? "",
-    pathId: courseData?.pathId ?? learningPathData.id,
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: courseData!
+      ? {
+          ...courseData,
+          imageUrl: courseData.imageUrl ?? "",
+          description: courseData.description ?? undefined,
+        }
+      : {
+          pathId: learningPathData.id,
+          levelId: "",
+          title: "",
+          slug: "",
+          description: "",
+          imageUrl: "",
+        },
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>(
-    {},
-  );
-  const [previewImage, setPreviewImage] = useState(
-    courseData?.imageUrl ??
-      "https://media.istockphoto.com/id/1907918459/photo/white-checkered-crumpled-paper-background.webp?a=1&b=1&s=612x612&w=0&k=20&c=q6wJaVMIMjE4CUtGhaEhErO1QiimBEYw6cbBoIdcWak=",
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedLevel, setSelectedLevel] = useState<string | null>(
-    courseData?.levelId ?? null,
-  );
+
+  const { data: learningPath, refetch: refetchPath } =
+    api.learning.getPathById.useQuery(learningPathData.id, {
+      initialData: learningPathData as unknown as LearningPathWithRelations,
+      enabled: !courseId,
+    });
 
   const createCourse = api.learning.createCourse.useMutation();
   const updateCourse = api.learning.updateCourse.useMutation();
-  const { data: existingCourse } = api.learning.getCourseById.useQuery(
-    { courseId: courseId ?? "" },
-    { enabled: !!courseId },
-  );
+
+  const imageUrl = watch("imageUrl");
+  const selectedLevel = watch("levelId");
+
+  // Local storage persistence
+  useEffect(() => {
+    if (courseId) return;
+    const savedData = localStorage.getItem(FORM_STORAGE_KEY);
+    if (savedData) {
+      reset(JSON.parse(savedData) as unknown as FormData);
+    }
+  }, [reset, courseId]);
 
   useEffect(() => {
-    if (existingCourse) {
-      setFormData({
-        ...existingCourse,
-        imageUrl: existingCourse.imageUrl ?? "",
-        description: existingCourse.description ?? "",
-      });
-      setPreviewImage(existingCourse.imageUrl ?? previewImage);
-      setSelectedLevel(existingCourse.levelId);
-    }
-  }, [existingCourse, previewImage]);
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: keyof FormData,
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: e.target.value,
-    }));
-    if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: undefined,
-      }));
-    }
-  };
+    if (courseId) return;
+    const subscription = watch((value) => {
+      localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(value));
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, courseId]);
 
   const generateSlug = () => {
-    if (formData.title) {
-      setFormData((prev) => ({
-        ...prev,
-        slug: prev.title?.toLowerCase().replace(/\s+/g, "-") ?? "",
-      }));
+    const title = watch("title");
+    if (title) {
+      const slug = title.toLowerCase().replace(/\s+/g, "-");
+      setValue("slug", slug, { shouldValidate: true });
     }
   };
 
-  const validateForm = () => {
+  const onSubmit = async (data: FormData) => {
     try {
-      formSchema.parse({
-        ...formData,
-        levelId: selectedLevel!,
-        pathId: learningPathData.id,
-      });
-      setErrors({});
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: Partial<Record<keyof FormData, string>> = {};
-        error.errors.forEach((err) => {
-          if (err.path[0]) {
-            newErrors[err.path[0] as keyof FormData] = err.message;
-          }
-        });
-        setErrors(newErrors);
-      }
-      return false;
-    }
-  };
-
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!selectedLevel) {
-      toast({
-        title: "Error",
-        description: "Please select a level",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const submissionData = {
-        ...formData,
-        levelId: selectedLevel,
-        pathId: learningPathData.id,
-      } as FormData;
-
       if (courseId) {
-        await updateCourse.mutateAsync({
-          ...submissionData,
-          id: courseId,
-          levelId: selectedLevel,
-        });
-        toast({
-          title: "Success",
-          description: "Course updated successfully",
-        });
+        await updateCourse.mutateAsync({ ...data, id: courseId });
+        toast({ title: "Success", description: "Course updated successfully" });
       } else {
-        await createCourse.mutateAsync(submissionData);
-        toast({
-          title: "Success",
-          description: "Course created successfully",
-        });
+        await createCourse.mutateAsync(data);
+        toast({ title: "Success", description: "Course created successfully" });
+        localStorage.removeItem(FORM_STORAGE_KEY);
       }
       router.push(`/learning-paths/d/${learningPathData.id}`);
     } catch (error) {
@@ -182,166 +132,170 @@ export default function CreateEditCourseForm({
         description: `Failed to ${courseId ? "update" : "create"} course`,
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
   return (
     <div className="grid grid-cols-1 gap-8 p-2 md:grid-cols-2 md:p-8">
-      <form onSubmit={onSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <div className="flex h-24 w-full flex-wrap gap-2 overflow-y-scroll py-1">
-          {learningPathData.levels?.map((level) => (
+          {learningPath?.levels?.map((level) => (
             <button
               type="button"
               className={`${
                 selectedLevel === level.id
-                  ? "border-green-600 bg-green-400"
+                  ? "border-green-600 bg-green-500"
                   : "border-neutral-300"
-              } rounded-2xl border-2 border-b-4 px-6 py-1.5 text-sm font-medium shadow-sm transition-all duration-100 ease-out hover:translate-y-0.5 hover:border-b-2`}
+              } h-fit rounded-2xl border-2 border-b-4 px-6 py-1.5 text-sm font-medium shadow-sm transition-all duration-100 ease-out hover:translate-y-0.5 hover:border-b-2`}
               key={level.id}
-              onClick={() => setSelectedLevel(level.id)}
+              onClick={() =>
+                setValue("levelId", level.id, { shouldValidate: true })
+              }
             >
-              Level {level.number}
+              <div>Level {level.number}</div>
             </button>
           ))}
           <CreateLevelDialog
             pathId={learningPathData.id}
-            index={(learningPathData.levels?.length ?? 0) + 1}
+            index={(learningPath?.levels?.length ?? 0) + 1}
+            onSuccess={refetchPath}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Title</label>
+          <label className="mb-2 block text-sm font-medium">Title</label>
           <Input
             placeholder="Course Title"
-            value={formData.title}
-            onChange={(e) => handleInputChange(e, "title")}
-            disabled={isLoading}
-            className={errors.title ? "border-red-500" : ""}
+            {...register("title")}
+            className={errors.title ? "border-destructive" : ""}
           />
           {errors.title && (
-            <p className="mt-1 text-sm text-red-500">{errors.title}</p>
+            <p className="text-destructive mt-1 text-sm">
+              {errors.title.message}
+            </p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Slug</label>
+          <label className="mb-2 block text-sm font-medium">Slug</label>
           <Input
             placeholder="generate-a-slug"
-            value={formData.slug}
-            onChange={(e) => handleInputChange(e, "slug")}
-            disabled={isLoading}
-            className={errors.slug ? "border-red-500" : ""}
+            {...register("slug")}
+            className={errors.slug ? "border-destructive" : ""}
           />
           {errors.slug && (
-            <p className="mt-1 text-sm text-red-500">{errors.slug}</p>
+            <p className="text-destructive mt-1 text-sm">
+              {errors.slug.message}
+            </p>
           )}
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="text-muted-foreground mt-1 text-sm">
             This will be used in the URL. Use lowercase letters, numbers, and
             hyphens only.
           </p>
           <Button
-            className="flex gap-2 bg-gradient-to-br from-blue-500 via-purple-600 to-purple-500 font-semibold !text-white"
             type="button"
             onClick={generateSlug}
-            disabled={isLoading}
+            variant="secondary"
+            className="mt-2 gap-2"
           >
-            <Stars size={18} color="#fff" /> Generate
+            <Stars size={18} /> Generate
           </Button>
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Description</label>
+          <label className="mb-2 block text-sm font-medium">Description</label>
           <Textarea
             placeholder="A simple course description"
-            className={`resize-none ${errors.description ? "border-red-500" : ""}`}
-            value={formData.description}
-            onChange={(e) => handleInputChange(e, "description")}
+            {...register("description")}
+            className={`resize-none ${errors.description ? "border-destructive" : ""}`}
             maxLength={500}
-            disabled={isLoading}
           />
           {errors.description && (
-            <p className="mt-1 text-sm text-red-500">{errors.description}</p>
+            <p className="text-destructive mt-1 text-sm">
+              {errors.description.message}
+            </p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Image URL</label>
-          <div className="flex items-center gap-3">
-            <Input
-              placeholder="Enter a URL"
-              value={formData.imageUrl}
-              onChange={(e) => handleInputChange(e, "imageUrl")}
-              disabled={isLoading}
-              className={errors.imageUrl ? "border-red-500" : ""}
-            />
-            <Button
-              type="button"
-              onClick={() => {
-                if (formData.imageUrl && isValidUrl(formData.imageUrl)) {
-                  setPreviewImage(formData.imageUrl);
-                } else {
-                  toast({
-                    variant: "destructive",
-                    title: "Error in the URL",
-                    description:
-                      "This may not be a valid URL, find another image. Check out Vecteezy or Unsplash vector images",
-                  });
-                }
-              }}
-              disabled={isLoading}
-            >
-              Preview
-            </Button>
-          </div>
+          <label className="mb-2 block text-sm font-medium">Image URL</label>
+          <Input
+            placeholder="Enter a valid image URL"
+            {...register("imageUrl")}
+            className={errors.imageUrl ? "border-destructive" : ""}
+          />
           {errors.imageUrl && (
-            <p className="mt-1 text-sm text-red-500">{errors.imageUrl}</p>
+            <p className="text-destructive mt-1 text-sm">
+              {errors.imageUrl.message}
+            </p>
           )}
         </div>
 
-        <Button type="submit" disabled={isLoading} className="w-full">
-          {isLoading
-            ? "Loading..."
+        <Button type="submit" disabled={isSubmitting} className="w-full">
+          {isSubmitting
+            ? "Processing..."
             : courseId
               ? "Update Course"
               : "Create Course"}
         </Button>
       </form>
 
-      <Card className="rounded-3xl p-2 md:p-6">
-        <h2 className="mb-4 text-base font-semibold md:text-2xl">Preview</h2>
-        <CardContent className="p-0 pt-8">
-          <div className="mx-auto w-full cursor-pointer overflow-clip rounded-3xl border-2 border-b-8 bg-white transition-all duration-300 ease-out hover:-translate-y-2 active:translate-y-1 active:scale-[0.98] active:border-b-2 md:w-[80%]">
-            <div className="w-full bg-blue-100 p-4">
-              <Image
-                src={previewImage || "/placeholder.svg"}
-                alt="Course Preview"
-                width={140}
-                height={140}
-                className="mx-auto object-cover h-40"
-              />
-            </div>
-
-            <div className="flex min-h-24 flex-col justify-center px-4 py-4">
-              <p className="text-xs font-medium text-blue-600/80">
-                {learningPathData.title} &middot; Level{" "}
-                {
-                  learningPathData.levels?.find((l) => l.id === selectedLevel)
-                    ?.number
-                }
-              </p>
-              <h3 className="mb-1 text-xl font-bold text-black">
-                {formData.title?.trim() ?? "Course Title"}
-              </h3>
-              <p className="text-[13px] text-neutral-600">
-                {formData.description?.trim() ??
-                  "Course description will appear here."}
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <CoursePreview
+        title={watch("title")}
+        description={watch("description")}
+        imageUrl={isValidUrl(imageUrl) ? imageUrl! : "/placeholder.svg"}
+        learningPathTitle={learningPath?.title || ""}
+        selectedLevel={
+          learningPath?.levels?.find((l) => l.id === selectedLevel)?.number
+        }
+      />
     </div>
   );
 }
+
+const CoursePreview = ({
+  title,
+  description,
+  imageUrl,
+  learningPathTitle,
+  selectedLevel,
+}: {
+  title?: string;
+  description?: string;
+  imageUrl: string;
+  learningPathTitle: string;
+  selectedLevel?: number;
+}) => (
+  <Card className="rounded-3xl p-2 md:p-6">
+    <h2 className="mb-4 text-base font-semibold md:text-2xl">Preview</h2>
+    <CardContent className="p-0 pt-8">
+      <div className="mx-auto w-full cursor-pointer overflow-clip rounded-3xl border-2 border-b-8 bg-white transition-all duration-300 ease-out hover:-translate-y-2 active:translate-y-1 active:scale-[0.98] active:border-b-2 md:w-[80%]">
+        <div className="w-full bg-blue-100 p-4">
+          <Image
+            src={imageUrl}
+            alt="Course Preview"
+            width={140}
+            height={140}
+            className="mx-auto h-40 object-cover"
+            onError={(e) => {
+              console.error("Image load error:", e);
+              e.currentTarget.src = "/placeholder.svg";
+            }}
+          />
+        </div>
+
+        <div className="flex min-h-24 flex-col justify-center px-4 py-4">
+          <p className="text-xs font-medium text-blue-600/80">
+            {learningPathTitle} {selectedLevel && `· Level ${selectedLevel}`}
+          </p>
+          <h3 className="mb-1 text-xl font-bold text-black">
+            {title?.trim() ?? "Course Title"}
+          </h3>
+          <p className="text-[13px] text-neutral-600">
+            {description?.trim() ?? "Course description will appear here."}
+          </p>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);

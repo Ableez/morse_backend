@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useEditor } from "../editor-context";
-import type { TextElement } from "@/types/swipe-data";
+import type { TextElement } from "#/types/swipe-data";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 

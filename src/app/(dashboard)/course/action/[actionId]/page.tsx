@@ -1,5 +1,5 @@
-import CreateEditCourseForm from "@/components/course/create-edit-course";
-import { api } from "@/trpc/server";
+import CreateEditCourseForm from "#/components/course/create-edit-course";
+import { api } from "#/trpc/server";
 
 type Props = {
   params: Promise<{ actionId: string }>;

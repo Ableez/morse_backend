@@ -1,10 +1,10 @@
 // element-width-control.tsx
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "#/components/ui/button";
 import { useEditor } from "./editor-context";
 import { memo } from "react";
-import type { ContentElement } from "@/types/swipe-data";
+import type { ContentElement } from "#/types/swipe-data";
 
 type ElementWidthControlProps = {
   element: ContentElement;

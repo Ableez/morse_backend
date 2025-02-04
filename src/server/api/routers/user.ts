@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
-import { users } from "@/server/db/schema";
+import { users } from "#/server/db/schema";
 import { eq } from "drizzle-orm";
 import type { PostgresError } from "postgres";
 import { TRPCError } from "@trpc/server";

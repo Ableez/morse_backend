@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "#/components/ui/button";
+import { Input } from "#/components/ui/input";
+import { Textarea } from "#/components/ui/textarea";
+import { Card, CardContent } from "#/components/ui/card";
 import {
   Form,
   FormControl,
@@ -17,12 +17,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { api } from "@/trpc/react";
+} from "#/components/ui/form";
+import { api } from "#/trpc/react";
 import Image from "next/image";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "#/hooks/use-toast";
 import { Stars } from "lucide-react";
-import { isValidUrl } from "@/lib/utils";
+import { isValidUrl } from "#/lib/utils";
 
 const formSchema = z.object({
   slug: z
@@ -156,14 +156,14 @@ export default function CreateEditLearningPathForm({ pathId, colors }: Props) {
     <div className="grid grid-cols-1 gap-8 p-2 md:grid-cols-2 md:p-8">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="flex flex-wrap gap-4 h-44 overflow-y-scroll">
+          <div className="flex h-44 flex-wrap gap-4 overflow-y-scroll">
             {colors.map((color) => {
               console.log("COLOR SCHEME ID: ", colorSchemeId === color.id);
               return (
                 <div
                   onClick={() => setCOlorSchemeId(color.id)}
                   key={color.colorName}
-                  className={`${colorSchemeId === color.id ? "border-blue-400 hover:border-blue-400" : ""} box-border aspect-square h-12 md:h-16 md:w-16 w-12 cursor-pointer rounded-2xl md:rounded-3xl border-4 border-transparent transition-all duration-200 ease-out hover:scale-[1.05] hover:border-blue-200`}
+                  className={`${colorSchemeId === color.id ? "border-blue-400 hover:border-blue-400" : ""} box-border aspect-square h-12 w-12 cursor-pointer rounded-2xl border-4 border-transparent transition-all duration-200 ease-out hover:scale-[1.05] hover:border-blue-200 md:h-16 md:w-16 md:rounded-3xl`}
                   style={{
                     backgroundColor:
                       color.defaultColor ?? color.s300 ?? "#343434",
@@ -298,9 +298,9 @@ export default function CreateEditLearningPathForm({ pathId, colors }: Props) {
       </Form>
 
       <Card className="rounded-3xl p-2 md:p-6">
-        <h2 className="mb-4 text-base md:text-2xl font-semibold">Preview</h2>
+        <h2 className="mb-4 text-base font-semibold md:text-2xl">Preview</h2>
         <CardContent className="p-0">
-          <div className="mx-auto w-full md:w-[80%] cursor-pointer overflow-clip rounded-3xl border-2 border-b-8 bg-white transition-all duration-300 ease-out hover:-translate-y-2 active:translate-y-1 active:scale-[0.98] active:border-b-2">
+          <div className="mx-auto w-full cursor-pointer overflow-clip rounded-3xl border-2 border-b-8 bg-white transition-all duration-300 ease-out hover:-translate-y-2 active:translate-y-1 active:scale-[0.98] active:border-b-2 md:w-[80%]">
             <div
               className="w-full pt-4"
               style={{

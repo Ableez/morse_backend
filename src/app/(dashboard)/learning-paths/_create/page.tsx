@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "#/components/ui/button";
+import { Input } from "#/components/ui/input";
+import { Textarea } from "#/components/ui/textarea";
+import { Card, CardContent } from "#/components/ui/card";
 import {
   Form,
   FormControl,
@@ -17,12 +17,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { api } from "@/trpc/react";
+} from "#/components/ui/form";
+import { api } from "#/trpc/react";
 import Image from "next/image";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "#/hooks/use-toast";
 import { Stars } from "lucide-react";
-import { isValidUrl } from "@/lib/utils";
+import { isValidUrl } from "#/lib/utils";
 
 const formSchema = z.object({
   slug: z

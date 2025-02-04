@@ -1,4 +1,4 @@
-import type { CardContentType } from "@/types/swipe-data";
+import type { CardContentType } from "#/types/swipe-data";
 
 export interface Lesson {
   id: string;
